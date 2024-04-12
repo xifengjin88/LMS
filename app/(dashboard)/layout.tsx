@@ -3,12 +3,26 @@
 import Sidebar from "./_components/sidebar";
 
 import { Fragment, useState } from "react";
-import { Dialog, Transition, Menu } from "@headlessui/react";
-import { X, Menu as MenuIcon, Search, Bell } from "lucide-react";
+import { Dialog, Transition } from "@headlessui/react";
+import { Button } from "@/components/ui/button";
+import { X, Menu as MenuIcon, Search, Bell, LogOut } from "lucide-react";
 import { UserButton } from "@clerk/nextjs";
+import { usePathname, useRouter } from "next/navigation";
+import { isRoute } from "@/lib/utils";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const pathname = usePathname();
+  const router = useRouter();
+  const isTeacherRoute = isRoute(pathname, "/teacher");
+  const handleExitTeacherMode = () => {
+    router.push("/dashboard");
+  };
+
+  const handleEnterTeacherMode = () => {
+    router.push("/teacher/courses");
+  };
+
   return (
     <div>
       <Transition.Root show={sidebarOpen} as={Fragment}>
@@ -108,13 +122,28 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 <Bell className="h-6 w-6" aria-hidden="true" />
               </button>
 
-              {/* Separator */}
               <div
                 className="hidden lg:block lg:h-6 lg:w-px lg:bg-gray-900/10"
                 aria-hidden="true"
               />
 
-              {/* Profile dropdown */}
+              <Button
+                variant="ghost"
+                onClick={() => {
+                  isTeacherRoute
+                    ? handleExitTeacherMode()
+                    : handleEnterTeacherMode();
+                }}
+              >
+                {isTeacherRoute ? (
+                  <>
+                    <LogOut /> Exit
+                  </>
+                ) : (
+                  <span>Teacher Mode</span>
+                )}
+              </Button>
+
               <div className="relative">
                 <UserButton afterSignOutUrl="/" />
               </div>

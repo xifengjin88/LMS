@@ -2,11 +2,11 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Settings, Home, Calendar } from "lucide-react";
+import { Settings, Home, Calendar, List, BarChartBig } from "lucide-react";
 import { usePathname } from "next/navigation";
-import { cn } from "@/lib/utils";
+import { cn, isRoute } from "@/lib/utils";
 
-const navigation = [
+const guestNavigation = [
   {
     href: "/dashboard",
     icon: Home,
@@ -19,12 +19,27 @@ const navigation = [
   },
 ];
 
+const teacherNavigation = [
+  {
+    href: "/teacher/courses",
+    icon: List,
+    name: "Courses",
+  },
+  {
+    href: "/teacher/analytics",
+    icon: BarChartBig,
+    name: "Analytics",
+  },
+];
+
 export default function Sidebar({
   setSidebarOpen,
 }: {
   setSidebarOpen?: (open: boolean) => void;
 }) {
   const pathname = usePathname();
+  const isTeacherRoute = isRoute(pathname, "/teacher");
+  const navigation = isTeacherRoute ? teacherNavigation : guestNavigation;
 
   return (
     <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-gray-900 px-6 pb-4">
