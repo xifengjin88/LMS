@@ -1,16 +1,19 @@
+"use server";
+
 import { redirect } from "next/navigation";
 import { parseWithZod } from "@conform-to/zod";
-import { z } from "zod";
-import { NextResponse } from "next/server";
+import { auth } from "@clerk/nextjs/server";
 
-export const courseSchema = z.object({
-  title: z.preprocess(
-    (value) => (value === "" ? undefined : value),
-    z.string({ required_error: "Course title is required" })
-  ),
-});
+import { z } from "zod";
+import { prisma } from "@/lib/server";
+import { courseSchema } from "./create/schema";
 
 export async function createCourse(prevState: unknown, formData: FormData) {
+  const { userId } = auth();
+
+  if (!userId) {
+    redirect("/");
+  }
   const submission = parseWithZod(formData, {
     schema: courseSchema,
   });
@@ -19,8 +22,20 @@ export async function createCourse(prevState: unknown, formData: FormData) {
     return submission.reply();
   }
 
-  throw new Response("something went wrong", {
-    status: 404,
-  });
-  redirect("/teacher/courses");
+  let course = null;
+
+  try {
+    course = await prisma.course.create({
+      data: {
+        userId: userId,
+        title: submission.value.title,
+      },
+    });
+  } catch (error) {
+    console.error("something went wrong");
+    return submission.reply({
+      formErrors: ["Something went wrong while creating the form"],
+    });
+  }
+  redirect(`/teacher/courses/${course.id}`);
 }

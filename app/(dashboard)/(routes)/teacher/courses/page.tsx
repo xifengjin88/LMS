@@ -14,9 +14,6 @@ export default async function Courses() {
 
   console.log(courses);
 
-  if (courses === null) {
-    notFound();
-  }
   return (
     <div>
       <Link href="/teacher/courses/create">

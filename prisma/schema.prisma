@@ -17,14 +17,15 @@ datasource db {
 model Course {
   id          String   @id @default(cuid())
   title       String
+  userId      String
   description String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   image       Image?
   isPublished Boolean?
   price       Float?
+  categoryId  String?
 
-  categories  Category[]
   attachments Attachment[]
 }
 
@@ -47,6 +48,4 @@ model Attachment {
 model Category {
   id   String @id @default(cuid())
   name String
-
-  courses Course[]
 }

@@ -5,6 +5,7 @@
   "scripts": {
     "dev:migrate": "dotenv -e .env.local -- bunx prisma migrate",
     "dev:db:push": "dotenv -e .env.local -- bunx prisma db push",
+    "dev:db:studio": "dotenv -e .env.local -- bunx prisma studio",
     "dev:run": "next dev",
     "build": "next build",
     "start": "next start",

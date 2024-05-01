@@ -1,24 +1,44 @@
 "use client";
+import { Loader2 } from "lucide-react";
 
 import { getInputProps, useForm } from "@conform-to/react";
 import { parseWithZod } from "@conform-to/zod";
-import { useFormState } from "react-dom";
+import { useFormState, useFormStatus } from "react-dom";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { createCourse, courseSchema } from "../action";
+import { createCourse } from "../action";
+import { courseSchema } from "./schema";
+
+const Submit = () => {
+  const status = useFormStatus();
+
+  return (
+    <div className="flex items-center">
+      <Button type="submit">
+        {status.pending ? (
+          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+        ) : (
+          "submit"
+        )}
+      </Button>
+    </div>
+  );
+};
 
 export default function CourseCreationPage() {
   const [lastResult, action] = useFormState(createCourse, undefined);
+
   const [form, fields] = useForm({
     // Sync the result of last submission
     lastResult,
-
     // Reuse the validation logic on the client
     onValidate({ formData }) {
       return parseWithZod(formData, { schema: courseSchema });
     },
   });
+
+  console.log(lastResult);
 
   return (
     <form id={form.id} onSubmit={form.onSubmit} action={action} noValidate>
@@ -38,10 +58,7 @@ export default function CourseCreationPage() {
             )}
           </div>
         </div>
-
-        <div className="flex items-center">
-          <Button type="submit">Create</Button>
-        </div>
+        <Submit />
       </div>
     </form>
   );
