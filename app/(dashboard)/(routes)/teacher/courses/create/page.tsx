@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { createCourse } from "../action";
-import { courseSchema } from "./schema";
+import { courseSchema } from "../schema";
 
 const Submit = () => {
   const status = useFormStatus();

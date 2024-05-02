@@ -1,7 +1,8 @@
 import { prisma } from "@/lib/server";
-import { auth } from "@clerk/nextjs";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import { notFound, redirect } from "next/navigation";
 import { LayoutDashboard } from "lucide-react";
+import TitleForm from "./_components/title-form";
 
 async function getCourse({ courseId }: { courseId: string }) {
   const { userId } = auth();
@@ -57,9 +58,12 @@ export default async function CoursePage({
       <h1 className="text-xl font-medium text-gray-800">Course setup</h1>
       <span className="text-sm text-gray-400">{completedText}</span>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-        <div className="flex items-center">
-          <LayoutDashboard className="w-6 h-6 mr-2 bg-green-50" />
-          Customize your course
+        <div>
+          <div className="flex items-center">
+            <LayoutDashboard className="w-6 h-6 mr-2 bg-green-50" />
+            <h1 className="text-xl">Customize your course</h1>
+          </div>
+          <TitleForm courseId={params.courseId} course={course} />
         </div>
       </div>
     </div>

@@ -6,7 +6,7 @@ import { auth } from "@clerk/nextjs/server";
 
 import { z } from "zod";
 import { prisma } from "@/lib/server";
-import { courseSchema } from "./create/schema";
+import { courseSchema } from "./schema";
 
 export async function createCourse(prevState: unknown, formData: FormData) {
   const { userId } = auth();
