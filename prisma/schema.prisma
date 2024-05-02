@@ -21,19 +21,12 @@ model Course {
   description String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  image       Image?
+  imageUrl    String?
   isPublished Boolean?
   price       Float?
   categoryId  String?
 
   attachments Attachment[]
-}
-
-model Image {
-  id       String @id @default(cuid())
-  courseId String @unique
-  course   Course @relation(fields: [courseId], references: [id])
-  url      String
 }
 
 model Attachment {

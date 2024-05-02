@@ -14,5 +14,13 @@ export const descriptionSchema = z.object({
   ),
 });
 
+export const imageSchema = z.object({
+  imageUrl: z.preprocess(
+    (value) => (value === "" ? undefined : value),
+    z.string({ required_error: "Image url is required" })
+  ),
+});
+
 export type TitleValueType = z.infer<typeof titleSchema>;
 export type DescriptionValueType = z.infer<typeof descriptionSchema>;
+export type ImageValueType = z.infer<typeof imageSchema>;

@@ -7,6 +7,7 @@ import {
   DescriptionValueType,
   TitleValueType,
   descriptionSchema,
+  imageSchema,
   titleSchema,
 } from "../schema";
 
@@ -62,6 +63,49 @@ export async function updateCourseDescription(
   }
 
   const result = descriptionSchema.safeParse(values);
+
+  if (!result.success) {
+    return {
+      status: "error",
+      error: result.error.flatten().fieldErrors,
+    };
+  }
+
+  try {
+    await prisma.course.update({
+      where: {
+        id: courseId,
+      },
+      data: {
+        ...values,
+      },
+    });
+
+    return {
+      status: "success",
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      status: "error",
+      message: "something went wrong",
+    };
+  }
+}
+
+export async function updateCourseImage(
+  courseId: string,
+  values: {
+    imageUrl: string;
+  }
+) {
+  const { userId } = auth();
+
+  if (!userId) {
+    redirect("/");
+  }
+
+  const result = imageSchema.safeParse(values);
 
   if (!result.success) {
     return {

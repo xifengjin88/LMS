@@ -4,6 +4,7 @@ import { notFound, redirect } from "next/navigation";
 import { LayoutDashboard } from "lucide-react";
 import TitleForm from "./_components/title-form";
 import DescriptionForm from "./_components/description-form";
+import ImageForm from "./_components/image-form";
 
 async function getCourse({ courseId }: { courseId: string }) {
   const { userId } = auth();
@@ -22,7 +23,7 @@ async function getCourse({ courseId }: { courseId: string }) {
         categoryId: true,
         title: true,
         description: true,
-        image: true,
+        imageUrl: true,
         price: true,
       },
     });
@@ -47,7 +48,7 @@ export default async function CoursePage({
     course.title,
     course.description,
     course.categoryId,
-    course.image,
+    course.imageUrl,
     course.price,
   ];
   const completedFields = requiredFields.filter(Boolean);
@@ -66,6 +67,7 @@ export default async function CoursePage({
           </div>
           <TitleForm courseId={params.courseId} course={course} />
           <DescriptionForm courseId={params.courseId} course={course} />
+          <ImageForm courseId={params.courseId} course={course} />
         </div>
       </div>
     </div>
