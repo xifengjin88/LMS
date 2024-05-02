@@ -3,6 +3,7 @@ import { auth, currentUser } from "@clerk/nextjs/server";
 import { notFound, redirect } from "next/navigation";
 import { LayoutDashboard } from "lucide-react";
 import TitleForm from "./_components/title-form";
+import DescriptionForm from "./_components/description-form";
 
 async function getCourse({ courseId }: { courseId: string }) {
   const { userId } = auth();
@@ -64,6 +65,7 @@ export default async function CoursePage({
             <h1 className="text-xl">Customize your course</h1>
           </div>
           <TitleForm courseId={params.courseId} course={course} />
+          <DescriptionForm courseId={params.courseId} course={course} />
         </div>
       </div>
     </div>

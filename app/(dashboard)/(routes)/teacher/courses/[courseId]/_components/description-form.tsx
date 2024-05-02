@@ -4,22 +4,22 @@ import { Button } from "@/components/ui/button";
 import { Course } from "@prisma/client";
 import { Pencil } from "lucide-react";
 import { useState } from "react";
-import * as z from "zod";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "react-hot-toast";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { useForm } from "react-hook-form";
-import { TitleValueType, titleSchema } from "../../schema";
-import { updateCourseTitle } from "../aciton";
+import { descriptionSchema, DescriptionValueType } from "../../schema";
+import { updateCourseDescription } from "../aciton";
 import { useRouter } from "next/navigation";
 
 type TitleFormProp = {
@@ -27,25 +27,25 @@ type TitleFormProp = {
   course: Pick<Course, "title" | "categoryId" | "description" | "price">;
 };
 
-export default function TitleForm({ course, courseId }: TitleFormProp) {
+export default function DescriptionForm({ course, courseId }: TitleFormProp) {
   const [isEditing, setIsEditing] = useState(false);
 
   const router = useRouter();
 
-  const form = useForm<TitleValueType>({
-    resolver: zodResolver(titleSchema),
+  const form = useForm<DescriptionValueType>({
+    resolver: zodResolver(descriptionSchema),
     defaultValues: {
-      title: course.title,
+      description: course.description ?? "",
     },
   });
 
   const handleEditToggle = () => setIsEditing((isEditing) => !isEditing);
-  const courseTitle = form.watch("title");
+  const description = form.watch("description");
 
-  const onSubmit = async (values: TitleValueType) => {
-    const { status, error } = await updateCourseTitle(courseId, values);
+  const onSubmit = async (values: DescriptionValueType) => {
+    const { status, error } = await updateCourseDescription(courseId, values);
     if (status === "success") {
-      toast.success("successfully updated!");
+      toast.success("successfully updated description!");
       router.refresh();
       handleEditToggle();
     } else {
@@ -57,14 +57,14 @@ export default function TitleForm({ course, courseId }: TitleFormProp) {
   return (
     <div className="mt-6 border bg-slate-100 rounded-md p-4">
       <div className="font-medium flex items-center justify-between">
-        Course Title
+        Course Description
         <Button variant="ghost" onClick={handleEditToggle}>
           {isEditing ? (
             "Cancel"
           ) : (
             <>
               <Pencil className="w-4 h-4 mr-2" />
-              Edit Title
+              Edit Description
             </>
           )}
         </Button>
@@ -75,12 +75,15 @@ export default function TitleForm({ course, courseId }: TitleFormProp) {
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
               <FormField
                 control={form.control}
-                name="title"
+                name="description"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Title</FormLabel>
+                    <FormLabel>Description</FormLabel>
                     <FormControl>
-                      <Input placeholder="Some course name" {...field} />
+                      <Textarea
+                        placeholder="Some description name"
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage />
@@ -91,7 +94,9 @@ export default function TitleForm({ course, courseId }: TitleFormProp) {
             </form>
           </Form>
         ) : (
-          <p className="text-sm mt-2">{courseTitle}</p>
+          <p className="text-sm mt-2">
+            {course.description === null ? "No description" : description}
+          </p>
         )}
       </div>
     </div>
