@@ -24,9 +24,12 @@ model Course {
   imageUrl    String?
   isPublished Boolean?
   price       Float?
-  categoryId  String?
 
+  categoryId  String?
+  category    Category?    @relation(fields: [categoryId], references: [id])
   attachments Attachment[]
+
+  @@index([categoryId])
 }
 
 model Attachment {
@@ -39,6 +42,7 @@ model Attachment {
 }
 
 model Category {
-  id   String @id @default(cuid())
-  name String
+  id      String   @id @default(cuid())
+  name    String   @unique
+  courses Course[]
 }
