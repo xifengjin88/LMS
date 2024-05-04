@@ -1,4 +1,5 @@
 import { type ClassValue, clsx } from "clsx";
+import { NextResponse } from "next/server";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
@@ -15,9 +16,19 @@ export function invariantResponse(
   responseInit?: ResponseInit
 ): asserts condition {
   if (!condition) {
-    throw new Response(typeof message === "function" ? message() : message, {
-      status: 400,
-      ...responseInit,
-    });
+    throw new NextResponse(
+      typeof message === "function" ? message() : message,
+      {
+        status: 400,
+        ...responseInit,
+      }
+    );
   }
+}
+
+export function formatCurrency(price: number) {
+  return new Intl.NumberFormat("en-US", {
+    currency: "USD",
+    style: "currency",
+  }).format(price);
 }

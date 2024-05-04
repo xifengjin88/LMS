@@ -15,44 +15,41 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-
+import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useForm } from "react-hook-form";
-import { descriptionSchema, DescriptionValueType } from "../../schema";
-import { updateCourseDescription } from "../aciton";
+import { priceSchema, PriceValueType } from "../../schema";
+import { updateCourse, updateCourseDescription } from "../aciton";
 import { useRouter } from "next/navigation";
+import { formatCurrency } from "@/lib/utils";
 
-type DescriptionFormProps = {
+type PriceFormProps = {
   courseId: string;
   course: Pick<Course, "title" | "categoryId" | "description" | "price">;
 };
 
-export default function DescriptionForm({
-  course,
-  courseId,
-}: DescriptionFormProps) {
+export default function PriceForm({ course, courseId }: PriceFormProps) {
   const [isEditing, setIsEditing] = useState(false);
 
   const router = useRouter();
 
-  const form = useForm<DescriptionValueType>({
-    resolver: zodResolver(descriptionSchema),
+  const form = useForm<PriceValueType>({
+    resolver: zodResolver(priceSchema),
     defaultValues: {
-      description: course.description ?? "",
+      price: course.price ?? 0,
     },
   });
 
   const handleEditToggle = () => setIsEditing((isEditing) => !isEditing);
-  const description = form.watch("description");
+  const price = form.watch("price");
 
-  const onSubmit = async (values: DescriptionValueType) => {
-    const { status, error } = await updateCourseDescription(courseId, values);
+  const onSubmit = async (values: PriceValueType) => {
+    const { status } = await updateCourse(values, courseId);
     if (status === "success") {
       toast.success("successfully updated description!");
       router.refresh();
       handleEditToggle();
     } else {
-      console.log(error);
       toast.error("Update unsuccessful, please try again later!");
     }
   };
@@ -67,7 +64,7 @@ export default function DescriptionForm({
           ) : (
             <>
               <Pencil className="w-4 h-4 mr-2" />
-              Edit Description
+              Edit Price
             </>
           )}
         </Button>
@@ -78,15 +75,12 @@ export default function DescriptionForm({
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
               <FormField
                 control={form.control}
-                name="description"
+                name="price"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Description</FormLabel>
                     <FormControl>
-                      <Textarea
-                        placeholder="Some description name"
-                        {...field}
-                      />
+                      <Input type="number" {...field} step="0.01" />
                     </FormControl>
 
                     <FormMessage />
@@ -98,7 +92,7 @@ export default function DescriptionForm({
           </Form>
         ) : (
           <p className="text-sm mt-2">
-            {course.description === null ? "No description" : description}
+            {course.price === null ? "No price" : formatCurrency(course.price)}
           </p>
         )}
       </div>
