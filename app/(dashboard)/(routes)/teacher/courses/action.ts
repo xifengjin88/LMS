@@ -6,7 +6,7 @@ import { auth } from "@clerk/nextjs/server";
 
 import { z } from "zod";
 import { prisma } from "@/lib/server";
-import { courseSchema } from "./schema";
+import { titleSchema } from "./schema";
 
 export async function createCourse(prevState: unknown, formData: FormData) {
   const { userId } = auth();
@@ -15,7 +15,7 @@ export async function createCourse(prevState: unknown, formData: FormData) {
     redirect("/");
   }
   const submission = parseWithZod(formData, {
-    schema: courseSchema,
+    schema: titleSchema,
   });
 
   if (submission.status !== "success") {

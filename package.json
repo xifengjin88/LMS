@@ -3,10 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev:migrate": "dotenv -e .env.local -- bunx prisma migrate",
-    "dev:db:push": "dotenv -e .env.local -- bunx prisma db push",
-    "dev:db:studio": "dotenv -e .env.local -- bunx prisma studio",
-    "dev:run": "next dev",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -21,10 +18,12 @@
     "@prisma/client": "^5.12.1",
     "@radix-ui/react-dialog": "^1.0.5",
     "@radix-ui/react-label": "^2.0.2",
+    "@radix-ui/react-popover": "^1.0.7",
     "@radix-ui/react-slot": "^1.0.2",
     "@uploadthing/react": "^6.5.1",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
+    "cmdk": "^1.0.0",
     "lucide-react": "^0.365.0",
     "next": "14.1.4",
     "react": "^18",
@@ -35,6 +34,9 @@
     "tailwindcss-animate": "^1.0.7",
     "uploadthing": "^6.10.1",
     "zod": "^3.23.5"
+  },
+  "prisma": {
+    "seed": "node prisma/seed.ts"
   },
   "devDependencies": {
     "@types/node": "^20",

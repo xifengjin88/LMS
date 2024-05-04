@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { createCourse } from "../action";
-import { courseSchema } from "../schema";
+import { titleSchema } from "../schema";
 
 const Submit = () => {
   const status = useFormStatus();
@@ -34,7 +34,7 @@ export default function CourseCreationPage() {
     lastResult,
     // Reuse the validation logic on the client
     onValidate({ formData }) {
-      return parseWithZod(formData, { schema: courseSchema });
+      return parseWithZod(formData, { schema: titleSchema });
     },
   });
 
