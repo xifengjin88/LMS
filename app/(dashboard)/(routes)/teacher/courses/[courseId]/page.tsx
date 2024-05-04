@@ -5,6 +5,7 @@ import { LayoutDashboard } from "lucide-react";
 import TitleForm from "./_components/title-form";
 import DescriptionForm from "./_components/description-form";
 import ImageForm from "./_components/image-form";
+import CategoryFrom from "./_components/category-form";
 
 async function getCourse({ courseId }: { courseId: string }) {
   const { userId } = auth();
@@ -27,7 +28,14 @@ async function getCourse({ courseId }: { courseId: string }) {
         price: true,
       },
     });
-    return { data: course, status: "success" };
+    const categories = await prisma.category.findMany({
+      select: {
+        courses: true,
+        id: true,
+        name: true,
+      },
+    });
+    return { course, status: "success", categories };
   } catch (error) {
     console.error(error);
     throw new Error("something happened while getting course");
@@ -39,7 +47,7 @@ export default async function CoursePage({
 }: {
   params: { courseId: string };
 }) {
-  const { data: course } = await getCourse({ courseId: params.courseId });
+  const { course, categories } = await getCourse({ courseId: params.courseId });
   if (!course) {
     notFound();
   }
@@ -68,6 +76,11 @@ export default async function CoursePage({
           <TitleForm courseId={params.courseId} course={course} />
           <DescriptionForm courseId={params.courseId} course={course} />
           <ImageForm courseId={params.courseId} course={course} />
+          <CategoryFrom
+            categories={categories}
+            courseId={params.courseId}
+            course={course}
+          />
         </div>
       </div>
     </div>

@@ -10,6 +10,7 @@ import {
   imageSchema,
   titleSchema,
 } from "../schema";
+import { Course } from "@prisma/client";
 
 export async function updateCourseTitle(
   courseId: string,
@@ -112,6 +113,38 @@ export async function updateCourseImage(
       status: "error",
       error: result.error.flatten().fieldErrors,
     };
+  }
+
+  try {
+    await prisma.course.update({
+      where: {
+        id: courseId,
+      },
+      data: {
+        ...values,
+      },
+    });
+
+    return {
+      status: "success",
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      status: "error",
+      message: "something went wrong",
+    };
+  }
+}
+
+export async function updateCourse<T extends keyof Course>(
+  values: Pick<Course, T>,
+  courseId: string
+) {
+  const { userId } = auth();
+
+  if (!userId) {
+    redirect("/");
   }
 
   try {
