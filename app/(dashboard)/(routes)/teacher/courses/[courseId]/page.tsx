@@ -1,12 +1,13 @@
 import { prisma } from "@/lib/server";
 import { auth } from "@clerk/nextjs/server";
 import { notFound, redirect } from "next/navigation";
-import { LayoutDashboard, ListChecks, DollarSign } from "lucide-react";
+import { LayoutDashboard, ListChecks, DollarSign, File } from "lucide-react";
 import TitleForm from "./_components/title-form";
 import DescriptionForm from "./_components/description-form";
 import ImageForm from "./_components/image-form";
 import CategoryFrom from "./_components/category-form";
 import PriceForm from "./_components/price-form";
+import AttachmentForm from "./_components/attachment-form";
 
 async function getCourse({ courseId }: { courseId: string }) {
   const { userId } = auth();
@@ -19,14 +20,13 @@ async function getCourse({ courseId }: { courseId: string }) {
     const course = await prisma.course.findUnique({
       where: {
         id: courseId,
-        userId,
       },
-      select: {
-        categoryId: true,
-        title: true,
-        description: true,
-        imageUrl: true,
-        price: true,
+      include: {
+        attachments: {
+          orderBy: {
+            createdAt: "desc", // or 'asc' for ascending order
+          },
+        },
       },
     });
     const categories = await prisma.category.findMany({
@@ -36,6 +36,7 @@ async function getCourse({ courseId }: { courseId: string }) {
         name: true,
       },
     });
+
     return { course, status: "success", categories };
   } catch (error) {
     console.error(error);
@@ -95,7 +96,7 @@ export default async function CoursePage({
             <h1 className="text-xl">Course Chapter</h1>
           </div>
           <div>Todo</div>
-          <div>
+          <div className="mt-2">
             <div className="flex items-center">
               <div className="bg-green-100 rounded-full w-8 h-8 flex items-center justify-center mr-2">
                 <DollarSign className="w-6 h-6" />
@@ -105,6 +106,18 @@ export default async function CoursePage({
             </div>
             <div>
               <PriceForm course={course} courseId={params.courseId} />
+            </div>
+          </div>
+          <div className="mt-2">
+            <div className="flex items-center">
+              <div className="bg-green-100 rounded-full w-8 h-8 flex items-center justify-center mr-2">
+                <File className="w-6 h-6" />
+              </div>
+
+              <h1 className="text-xl">Resources & Attachments</h1>
+            </div>
+            <div>
+              <AttachmentForm data={course} courseId={params.courseId} />
             </div>
           </div>
         </div>
