@@ -32,7 +32,7 @@ model Attachment {
   id        String   @id @default(cuid())
   name      String
   url       String
-  courseId  String   @unique
+  courseId  String
   course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

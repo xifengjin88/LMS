@@ -230,3 +230,51 @@ export async function deleteAttachment({ id }: { id: string }) {
     };
   }
 }
+
+export async function createChapter({
+  title,
+  courseId,
+}: {
+  title: string;
+  courseId: string;
+}) {
+  const { userId } = auth();
+
+  if (!userId) {
+    redirect("/");
+  }
+
+  try {
+    const course = await prisma.course.findUnique({
+      where: { id: courseId },
+    });
+    if (course?.userId !== userId) {
+      throw new Error("Not authorized");
+    }
+    const lastChapter = await prisma.chapter.findFirst({
+      where: {
+        courseId,
+      },
+      orderBy: {
+        position: "desc",
+      },
+    });
+
+    const position = lastChapter ? lastChapter.position + 1 : 1;
+    await prisma.chapter.create({
+      data: {
+        courseId,
+        title,
+        position,
+      },
+    });
+
+    return { status: "success" };
+  } catch (error) {
+    console.error(error);
+    return {
+      status: "error",
+      message: "something went wrong",
+    };
+  }
+}
