@@ -168,3 +168,65 @@ export async function updateCourse<T extends keyof Course>(
     };
   }
 }
+
+export async function createAttachment({
+  url,
+  courseId,
+}: {
+  url: string;
+  courseId: string;
+}) {
+  const name = url.split("/").pop() ?? "";
+
+  const { userId } = auth();
+
+  if (!userId) {
+    redirect("/");
+  }
+
+  try {
+    await prisma.attachment.create({
+      data: {
+        courseId,
+        name,
+        url,
+      },
+    });
+
+    return {
+      status: "success",
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      status: "error",
+      message: "something went wrong",
+    };
+  }
+}
+
+export async function deleteAttachment({ id }: { id: string }) {
+  const { userId } = auth();
+
+  if (!userId) {
+    redirect("/");
+  }
+
+  try {
+    await prisma.attachment.delete({
+      where: {
+        id,
+      },
+    });
+
+    return {
+      status: "success",
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      status: "error",
+      message: "something went wrong",
+    };
+  }
+}

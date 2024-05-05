@@ -38,8 +38,6 @@ export default function CourseCreationPage() {
     },
   });
 
-  console.log(lastResult);
-
   return (
     <form id={form.id} onSubmit={form.onSubmit} action={action} noValidate>
       <div className="max-w-5xl mx-auto h-full p-6 md:items-center md:justify-center">
