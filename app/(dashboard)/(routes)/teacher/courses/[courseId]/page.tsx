@@ -8,6 +8,7 @@ import ImageForm from "./_components/image-form";
 import CategoryFrom from "./_components/category-form";
 import PriceForm from "./_components/price-form";
 import AttachmentForm from "./_components/attachment-form";
+import ChapterForm from "./_components/chapter-form";
 
 async function getCourse({ courseId }: { courseId: string }) {
   const { userId } = auth();
@@ -24,7 +25,12 @@ async function getCourse({ courseId }: { courseId: string }) {
       include: {
         attachments: {
           orderBy: {
-            createdAt: "desc", // or 'asc' for ascending order
+            createdAt: "asc", // or 'asc' for ascending order
+          },
+        },
+        chapters: {
+          orderBy: {
+            createdAt: "asc",
           },
         },
       },
@@ -40,7 +46,7 @@ async function getCourse({ courseId }: { courseId: string }) {
     return { course, status: "success", categories };
   } catch (error) {
     console.error(error);
-    throw new Error("something happened while getting course");
+    return { status: "error", message: "something went wrong" };
   }
 }
 
@@ -54,12 +60,15 @@ export default async function CoursePage({
     notFound();
   }
 
+  console.log(course.chapters);
+
   const requiredFields = [
     course.title,
     course.description,
     course.categoryId,
     course.imageUrl,
     course.price,
+    course.chapters.filter(({ isPublished }) => isPublished).length > 0,
   ];
   const completedFields = requiredFields.filter(Boolean);
 
@@ -95,8 +104,10 @@ export default async function CoursePage({
 
             <h1 className="text-xl">Course Chapter</h1>
           </div>
-          <div>Todo</div>
-          <div className="mt-2">
+          <div>
+            <ChapterForm course={course} courseId={params.courseId} />
+          </div>
+          <div className="mt-4">
             <div className="flex items-center">
               <div className="bg-green-100 rounded-full w-8 h-8 flex items-center justify-center mr-2">
                 <DollarSign className="w-6 h-6" />

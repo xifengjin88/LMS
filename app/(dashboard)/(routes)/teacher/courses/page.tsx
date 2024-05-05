@@ -12,8 +12,6 @@ async function getCourses() {
 export default async function Courses() {
   const courses = await getCourses();
 
-  console.log(courses);
-
   return (
     <div>
       <Link href="/teacher/courses/create">
